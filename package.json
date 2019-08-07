@@ -1,6 +1,6 @@
 {
   "name": "types-first-ui",
-  "version": "2.1.4",
+  "version": "3.0.0-alpha.0",
   "description": "An opinionated framework for building long-lived, maintainable UI codebases",
   "main": "./dist/bundle.js",
   "types": "./dist/index.d.ts",
@@ -28,7 +28,7 @@
     "example:simple-counter": "webpack-dev-server --mode development --config example/simple-counter/webpack.config.js"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
+    "react": "^16.8.0",
     "rxjs": "^6.0.0"
   },
   "dependencies": {
@@ -41,19 +41,19 @@
     "@types/enzyme": "^3.1.10",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.106",
-    "@types/react": "^16.3.13",
+    "@types/react": "^16.8.25",
     "@types/reduce-reducers": "^0.1.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^22.4.4",
     "lodash": "^4.17.5",
-    "react": "^16.3.2",
-    "react-dom": "^16.4.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "redux": "^4.0.0",
     "rollup": "^0.62.0",
     "rollup-plugin-uglify": "^4.0.0",
-    "rxjs": "^6.3.3",
+    "rxjs": "^6.5.2",
     "ts-jest": "^22.4.6",
     "ts-loader": "^4.2.0",
     "typescript": "^3.1.1",

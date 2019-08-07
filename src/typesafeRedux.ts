@@ -14,21 +14,21 @@
    limitations under the License.
  */
 
-import { each } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { each } from "lodash";
+import { BehaviorSubject } from "rxjs";
 import {
   App,
   AppCreator,
   CombinedActions,
   CombinedEpicDependencies,
   CombinedState,
-  FeaturesMap,
   CreateAppParams,
-} from './createApp';
-import createActionImplementer, { ActionImplementer } from './implementAction';
-import createPathFactory, { PathCreator } from './paths';
-import createSelectorFactory, { SelectorCreator } from './selectors';
-import { Action } from './types';
+  FeaturesMap
+} from "./createApp";
+import createActionImplementer, { ActionImplementer } from "./implementAction";
+import createPathFactory, { PathCreator } from "./paths";
+import createSelectorFactory, { SelectorCreator } from "./selectors";
+import { Action } from "./types";
 
 const emptyObj = {};
 
@@ -40,7 +40,7 @@ export type TypesafeRedux<
   TAllEpicDeps extends object = null,
   TFeaturesMap extends FeaturesMap<TFeaturesMap> = null
 > = PathCreator<TAllState> &
-  SelectorCreator<TAllState> &
+  SelectorCreator &
   ActionImplementer<TAllState, TOwnActions, TAllActions, TAllEpicDeps> &
   AppCreator<
     TOwnState,
@@ -85,7 +85,13 @@ export default function createTypesafeRedux<
     TAllEpicDeps
   >();
   const createApp = (
-    params: CreateAppParams<TOwnState, TAllState, TOwnActions, TAllActions, TAllEpicDeps>
+    params: CreateAppParams<
+      TOwnState,
+      TAllState,
+      TOwnActions,
+      TAllActions,
+      TAllEpicDeps
+    >
   ) => {
     return new App<
       TOwnState,
@@ -107,6 +113,6 @@ export default function createTypesafeRedux<
     path,
     selector,
     action,
-    createApp,
+    createApp
   };
 }

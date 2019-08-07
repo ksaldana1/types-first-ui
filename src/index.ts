@@ -14,17 +14,18 @@
    limitations under the License.
  */
 
-import createTypesafeRedux from './typesafeRedux';
-import ofType from './utils/ofType';
-import { flow } from './utils/flow';
-import { comparators } from './utils/comparators';
+import createTypesafeRedux from "./typesafeRedux";
+import ofType from "./utils/ofType";
+import { flow } from "./utils/flow";
+import { comparators } from "./utils/comparators";
+import { usePath, useDispatchFactory } from "./utils/hooks";
 
-export * from './types';
-export * from './typesafeRedux';
-export * from './selectors';
-export * from './paths';
-export * from './implementAction';
-export * from './createApp';
-export * from './connector';
+export * from "./types";
+export * from "./typesafeRedux";
+export * from "./selectors";
+export * from "./paths";
+export * from "./implementAction";
+export * from "./createApp";
+export * from "./connector";
 
 export { createTypesafeRedux, ofType, flow, comparators };

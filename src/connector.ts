@@ -14,31 +14,33 @@
    limitations under the License.
  */
 
-import { isFunction, mapValues } from 'lodash';
-import * as React from 'react';
-import { Observable, Subscription, combineLatest } from 'rxjs';
-import { map, sample } from 'rxjs/operators';
-import { Action, Arg0, Dispatch } from './types';
-import { comparators } from './utils/comparators';
-import { ActionCreator } from './implementAction';
+import { isFunction, mapValues } from "lodash";
+import * as React from "react";
+import { combineLatest, Observable, Subscription } from "rxjs";
+import { map, sample } from "rxjs/operators";
+import { Action, Dispatch } from "./types";
+import { comparators } from "./utils/comparators";
 
 export type BoundActionCreator<
   TAllActions extends Action,
-  TActionType extends TAllActions['type']
-> = (payload: Extract<TAllActions, { type: TActionType }>['payload']) => void;
+  TActionType extends TAllActions["type"]
+> = (payload: Extract<TAllActions, { type: TActionType }>["payload"]) => void;
 
 export type ObservableMap<TObservableMap> = {
   [K in keyof TObservableMap]: Observable<any>
 };
-export type ObservableProps<T extends object> = { [P in keyof T]: Observable<T[P]> };
-export type ObservablePropsFactory<TObservableProps extends object, TOwnProps> = (
-  ownProps?: TOwnProps
-) => ObservableProps<TObservableProps>;
+export type ObservableProps<T extends object> = {
+  [P in keyof T]: Observable<T[P]>
+};
+export type ObservablePropsFactory<
+  TObservableProps extends object,
+  TOwnProps
+> = (ownProps?: TOwnProps) => ObservableProps<TObservableProps>;
 
-export type ActionCreatorsMap<TAllActions extends Action, TActionProps> = Record<
-  keyof TActionProps,
-  (...args: any[]) => TAllActions
->;
+export type ActionCreatorsMap<
+  TAllActions extends Action,
+  TActionProps
+> = Record<keyof TActionProps, (...args: any[]) => TAllActions>;
 
 export class Connector<TState extends object, TActions extends Action> {
   private _state$: Observable<TState>;
@@ -70,7 +72,10 @@ export class Connector<TState extends object, TActions extends Action> {
     ): React.ComponentClass<TOwnProps> => {
       type ComponentState = TObservableProps & TActionProps;
 
-      return class ConnectedComponent extends React.Component<TOwnProps, ComponentState> {
+      return class ConnectedComponent extends React.Component<
+        TOwnProps,
+        ComponentState
+      > {
         // dispatchProps and observablePropValues are passed to render the wrapped component
         // private dispatchProps: TActionProps;
         // private observablePropValues: TObservableProps;
@@ -91,7 +96,8 @@ export class Connector<TState extends object, TActions extends Action> {
           this.subscribeObservableProps(observableProps);
           // Run ownprops through action creator factory
           const actionCreators =
-            actionCreatorProps || ({} as ActionCreatorsMap<TActions, TActionProps>);
+            actionCreatorProps ||
+            ({} as ActionCreatorsMap<TActions, TActionProps>);
           // Bind action creators to dispatch
           this.bindDispatch(actionCreators);
 
@@ -106,7 +112,9 @@ export class Connector<TState extends object, TActions extends Action> {
           // TODO: refactor to not suck
           const obsIsFactory = isFunction(observablePropsFactory);
           if (obsIsFactory) {
-            this.subscribeObservableProps(this.createObservableProps(nextProps));
+            this.subscribeObservableProps(
+              this.createObservableProps(nextProps)
+            );
           }
           if (obsIsFactory) {
             return false;
@@ -141,7 +149,9 @@ export class Connector<TState extends object, TActions extends Action> {
           this.clearSubscription();
 
           // TODO: the keys thing is weird, I can get rid of it
-          const keys = Object.keys(observableProps) as Array<keyof TObservableProps>;
+          const keys = Object.keys(observableProps) as Array<
+            keyof TObservableProps
+          >;
           this.observablePropSubscription = combineLatest(
             ...keys.map(key => {
               const obs$ = observableProps[key];

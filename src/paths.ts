@@ -14,12 +14,18 @@
    limitations under the License.
  */
 
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, publishReplay, refCount } from 'rxjs/operators';
-import { Selector } from './selectors';
-import { StateTransform } from './types';
-import { get } from './utils/get';
-import { set } from './utils/set';
+import { Observable } from "rxjs";
+import {
+  distinctUntilChanged,
+  map,
+  publishReplay,
+  refCount
+} from "rxjs/operators";
+import { Selector } from "./selectors";
+import { StateTransform } from "./types";
+import { get } from "./utils/get";
+import { set } from "./utils/set";
+import { toBehaviorSubject } from "./utils/toBehaviorSubject";
 
 // A path is a selector that additionally has utility functions to to immutably get & reassign values
 // on the state tree
@@ -27,10 +33,14 @@ export interface PathAPI<TState extends object, TVal> {
   get: (state: TState) => TVal;
   set: (nextVal: TVal) => StateTransform<TState>;
 }
-export type Path<TState extends object, TVal> = Selector<TVal> & PathAPI<TState, TVal>;
+export type Path<TState extends object, TVal> = Selector<TVal> &
+  PathAPI<TState, TVal>;
 
 export interface PathCreator<TState extends object> {
-  path<K extends keyof TState>(ks: [K], defaultVal?: TState[K]): Path<TState, TState[K]>;
+  path<K extends keyof TState>(
+    ks: [K],
+    defaultVal?: TState[K]
+  ): Path<TState, TState[K]>;
   path<K extends keyof TState, K1 extends keyof TState[K]>(
     ks: [K, K1],
     defaultVal?: TState[K][K1]
@@ -153,14 +163,14 @@ export default function createPathFactory<TState extends object>(
     const _set = set(keys);
     const obs$ = state$.pipe(
       map(_get),
-      distinctUntilChanged(),
-      publishReplay(1),
-      refCount()
+      distinctUntilChanged()
     );
 
-    return Object.assign(obs$, {
+    const subject$ = toBehaviorSubject(obs$);
+
+    return Object.assign(subject$, {
       get: _get,
-      set: _set,
+      set: _set
     });
   };
 

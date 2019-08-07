@@ -14,15 +14,10 @@
    limitations under the License.
  */
 
-import { initial, isFunction, last } from 'lodash';
-import { Observable, combineLatest } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  publishReplay,
-  refCount,
-  sample,
-} from 'rxjs/operators';
+import { initial, isFunction, last } from "lodash";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { distinctUntilChanged, map, sample } from "rxjs/operators";
+import { toBehaviorSubject } from "./utils/toBehaviorSubject";
 
 function strictEquality(a, b) {
   return a === b;
@@ -32,9 +27,9 @@ export interface SelectorOptions<T> {
   compare: (a: T, b: T) => boolean;
 }
 // A selector is an observable over the state stream, which can have its source overridden
-export type Selector<TVal> = Observable<TVal>;
+export type Selector<TVal> = BehaviorSubject<TVal>;
 
-export interface SelectorCreator<TState extends object> {
+export interface SelectorCreator {
   selector<A, Result>(
     selector1: Observable<A>,
     projectFn: (arg1: A) => Result,
@@ -88,7 +83,15 @@ export interface SelectorCreator<TState extends object> {
     selector5: Observable<E>,
     selector6: Observable<F>,
     selector7: Observable<G>,
-    projectFn: (arg1: A, arg2: B, arg3: C, arg4: D, arg5: E, arg6: F, arg7: G) => Result,
+    projectFn: (
+      arg1: A,
+      arg2: B,
+      arg3: C,
+      arg4: D,
+      arg5: E,
+      arg6: F,
+      arg7: G
+    ) => Result,
     opts?: SelectorOptions<Result>
   ): Selector<Result>;
   selector<A, B, C, D, E, F, G, H, Result>(
@@ -139,7 +142,7 @@ export interface SelectorCreator<TState extends object> {
 
 export default function createSelectorFactory<TState extends object>(
   state$: Observable<TState>
-): SelectorCreator<TState> {
+): SelectorCreator {
   function selector(...args: any[]) {
     const lastArg = last(args);
     let inputs, projectFn, opts;
@@ -148,7 +151,7 @@ export default function createSelectorFactory<TState extends object>(
       inputs = initial(args);
       projectFn = lastArg;
       opts = {
-        compare: strictEquality,
+        compare: strictEquality
       };
     } else {
       opts = lastArg;
@@ -159,12 +162,10 @@ export default function createSelectorFactory<TState extends object>(
     const selector$ = combineLatest(...inputs).pipe(
       sample(state$),
       map(args => projectFn(...args)),
-      distinctUntilChanged(opts.compare),
-      publishReplay(1),
-      refCount()
+      distinctUntilChanged(opts.compare)
     );
 
-    return selector$;
+    return toBehaviorSubject(selector$);
   }
 
   return { selector };
