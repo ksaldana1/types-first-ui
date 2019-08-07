@@ -28,4 +28,11 @@ export * from "./implementAction";
 export * from "./createApp";
 export * from "./connector";
 
-export { createTypesafeRedux, ofType, flow, comparators };
+export {
+  createTypesafeRedux,
+  ofType,
+  flow,
+  comparators,
+  usePath,
+  useDispatchFactory
+};
